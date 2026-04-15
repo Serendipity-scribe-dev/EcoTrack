@@ -85,11 +85,11 @@ export const updateMonthlyGoal = createAsyncThunk(
 // ── Initial State ──────────────────────────────────────────────
 
 const LEVEL_BADGES = {
-  1: { badge: 'Seedling',  emoji: '🌱' },
-  2: { badge: 'Sapling',   emoji: '🌿' },
-  3: { badge: 'Redwood',   emoji: '🌳' },
-  4: { badge: 'Ancient',   emoji: '🌲' },
-  5: { badge: 'Guardian',  emoji: '🌍' },
+  1: { badge: 'Seedling', emoji: '🌱' },
+  2: { badge: 'Sapling', emoji: '🌿' },
+  3: { badge: 'Redwood', emoji: '🌳' },
+  4: { badge: 'Ancient', emoji: '🌲' },
+  5: { badge: 'Guardian', emoji: '🌍' },
 };
 
 const initialState = {
@@ -148,9 +148,9 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     // loginWithGoogle — just triggers redirect, shows loading spinner
     builder
-      .addCase(loginWithGoogle.pending,   (state) => { state.loading = true; state.error = null; })
+      .addCase(loginWithGoogle.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(loginWithGoogle.fulfilled, (state) => { state.loading = true; }) // keep loading during redirect
-      .addCase(loginWithGoogle.rejected,  (state, action) => { state.loading = false; state.error = action.payload; });
+      .addCase(loginWithGoogle.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
 
     // handleRedirectResult — processes result after Google redirects back
     const applyUserData = (state, action) => {
@@ -170,9 +170,9 @@ const userSlice = createSlice({
       state.isAuthenticated = true;
     };
     builder
-      .addCase(handleRedirectResult.pending,   (state) => { state.loading = true; state.error = null; })
+      .addCase(handleRedirectResult.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(handleRedirectResult.fulfilled, applyUserData)
-      .addCase(handleRedirectResult.rejected,  (state, action) => { state.loading = false; state.error = action.payload; });
+      .addCase(handleRedirectResult.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
 
     // logoutUser
     builder.addCase(logoutUser.fulfilled, () => ({
@@ -209,5 +209,5 @@ const userSlice = createSlice({
 
 export const { setUserFromFirebase, updateUserStats, incrementCarbonLogged, clearError } = userSlice.actions;
 export const LEVEL_BADGES_MAP = LEVEL_BADGES;
-export { handleRedirectResult };
+
 export default userSlice.reducer;
