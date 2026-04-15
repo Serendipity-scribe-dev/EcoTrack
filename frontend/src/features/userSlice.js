@@ -154,8 +154,8 @@ const userSlice = createSlice({
 
     // handleRedirectResult — processes result after Google redirects back
     const applyUserData = (state, action) => {
-      if (!action.payload) return; // null = no redirect was pending
-      state.loading = false;
+      state.loading = false; // ← ALWAYS reset loading first (was after early return — bug!)
+      if (!action.payload) return; // null = no redirect pending, just stop here
       const d = action.payload;
       state.token = d.token;
       state.user = d;
