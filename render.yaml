@@ -1,0 +1,21 @@
+# Render Deploy Configuration
+# https://render.com/docs/render-yaml-schema
+
+services:
+  - type: web
+    name: ecotrack
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false          # Set manually in Render dashboard
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false

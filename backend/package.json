@@ -1,0 +1,25 @@
+{
+  "name": "ecotrack-backend",
+  "version": "1.0.0",
+  "description": "EcoTrack - Gamified Carbon Footprint Tracker API",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "build": "cd ../frontend && npm install && npm run build"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "helmet": "^7.1.0",
+    "mongoose": "^8.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3"
+  }
+}

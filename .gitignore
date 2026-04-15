@@ -1,0 +1,13 @@
+# Root gitignore
+node_modules/
+dist/
+*.log
+
+# Environment files — NEVER commit these
+backend/.env
+frontend/.env.local
+frontend/.env
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,500 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════
+   EcoTrack — Eco Design System v2
+   Clean, professional dark mode inspired by Cool the Globe
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ─────────────────────────────────── */
+:root {
+  /* Eco (new) */
+  --eco-bg:          #080c08;
+  --eco-surface:     #111611;
+  --eco-surface2:    #1a2019;
+  --eco-green:       #00BF6F;
+  --eco-green-dim:   #009958;
+  --eco-green-bright:#00E87F;
+  --eco-text:        #E8F5E9;
+  --eco-muted:       #6B8068;
+  --eco-border:      rgba(0, 191, 111, 0.15);
+  --eco-border-s:    rgba(0, 191, 111, 0.35);
+
+  /* Legacy (matrix/cyberpunk — kept for other pages) */
+  --neon: #00FF41;
+  --neon-dim: #00CC33;
+  --neon-faint: rgba(0, 255, 65, 0.1);
+  --black: #000000;
+  --terminal: #0d0d0d;
+}
+
+/* ── Reset & Base ──────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eco-green) var(--eco-bg);
+}
+
+*::-webkit-scrollbar { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: var(--eco-bg); }
+*::-webkit-scrollbar-thumb { background: var(--eco-green-dim); border-radius: 2px; }
+
+body {
+  background-color: var(--eco-bg);
+  color: var(--eco-text);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════════
+   NEW ECO DESIGN COMPONENTS
+   ══════════════════════════════════════════════════════ */
+
+/* ── Eco Card ───────────────────────────────────────── */
+.eco-card {
+  background: var(--eco-surface);
+  border: 1px solid var(--eco-border);
+  border-radius: 16px;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+.eco-card:hover {
+  background: var(--eco-surface2);
+  border-color: var(--eco-border-s);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 191, 111, 0.12);
+}
+
+/* ── Eco Card Elevated ──────────────────────────────── */
+.eco-card-elevated {
+  background: var(--eco-surface);
+  border: 1px solid var(--eco-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Eco Progress Bar ───────────────────────────────── */
+.eco-progress-track {
+  height: 8px;
+  background: rgba(0, 191, 111, 0.12);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.eco-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--eco-green-dim), var(--eco-green), var(--eco-green-bright));
+  border-radius: 99px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.eco-progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* ── Eco Primary Button ─────────────────────────────── */
+.eco-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--eco-green), var(--eco-green-bright));
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 191, 111, 0.35);
+  letter-spacing: 0.01em;
+}
+
+.eco-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 191, 111, 0.5);
+}
+
+.eco-btn-primary:active {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+/* ── Eco Ghost Button ───────────────────────────────── */
+.eco-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  color: var(--eco-green);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1.5px solid var(--eco-border-s);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eco-btn-ghost:hover {
+  background: rgba(0, 191, 111, 0.08);
+  border-color: var(--eco-green);
+}
+
+/* ── Eco Badge ──────────────────────────────────────── */
+.eco-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: rgba(0, 191, 111, 0.12);
+  border: 1px solid rgba(0, 191, 111, 0.25);
+  color: var(--eco-green);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Eco Section Label ──────────────────────────────── */
+.eco-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--eco-muted);
+}
+
+/* ── Eco Page Container ─────────────────────────────── */
+.eco-page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
+
+@media (min-width: 768px) {
+  .eco-page {
+    padding: 32px 24px 48px;
+  }
+}
+
+/* ── Eco Input ──────────────────────────────────────── */
+.eco-input {
+  background: var(--eco-surface2);
+  border: 1.5px solid var(--eco-border);
+  color: var(--eco-text);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.eco-input:focus {
+  border-color: var(--eco-green);
+  box-shadow: 0 0 0 3px rgba(0, 191, 111, 0.12);
+}
+
+.eco-input option {
+  background: var(--eco-surface);
+  color: var(--eco-text);
+}
+
+/* ── Eco Range Slider ───────────────────────────────── */
+.eco-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(0, 191, 111, 0.15);
+  outline: none;
+  cursor: pointer;
+}
+
+.eco-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--eco-green);
+  border: 3px solid var(--eco-surface);
+  box-shadow: 0 0 10px rgba(0, 191, 111, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.eco-range::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.eco-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--eco-green);
+  border: 3px solid var(--eco-surface);
+  cursor: pointer;
+}
+
+/* ── Modal Overlay ──────────────────────────────────── */
+.eco-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: overlayIn 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .eco-modal-overlay {
+    align-items: center;
+  }
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.eco-modal {
+  background: var(--eco-surface);
+  border: 1px solid var(--eco-border);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 600px) {
+  .eco-modal {
+    border-radius: 24px;
+    max-height: 85vh;
+  }
+}
+
+@keyframes modalUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════════════
+   LEGACY (MATRIX / CYBERPUNK) — kept for LandingPage,
+   LogActivity, Leaderboard, Profile backward compat
+   ══════════════════════════════════════════════════════ */
+
+.glass-card {
+  background: rgba(0, 255, 65, 0.04);
+  border: 1px solid rgba(0, 255, 65, 0.25);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 255, 65, 0.5);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+}
+
+.btn-neon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: 1.5px solid var(--neon);
+  color: var(--neon);
+  background: transparent;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-neon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--neon);
+  transform: translateX(-105%);
+  transition: transform 0.25s ease;
+  z-index: -1;
+}
+
+.btn-neon:hover { color: #000; box-shadow: 0 0 20px rgba(0, 255, 65, 0.5); }
+.btn-neon:hover::before { transform: translateX(0); }
+
+.btn-neon-solid {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: var(--neon);
+  color: #000;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.btn-neon-solid:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.6);
+  transform: translateY(-1px);
+}
+
+.input-neon {
+  background: rgba(0, 255, 65, 0.04);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  color: var(--neon);
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 6px;
+  padding: 10px 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-neon:focus {
+  border-color: var(--neon);
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.25);
+}
+
+.input-neon option { background: #0d0d0d; color: var(--neon); }
+
+.xp-bar-track {
+  height: 6px;
+  background: rgba(0, 255, 65, 0.12);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00CC33, #00FF41);
+  border-radius: 99px;
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0, 255, 65, 0.015) 2px, rgba(0, 255, 65, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.font-orbitron { font-family: 'Orbitron', monospace; }
+
+.text-glow { text-shadow: 0 0 10px rgba(0, 255, 65, 0.8), 0 0 30px rgba(0, 255, 65, 0.4); }
+.text-glow-sm { text-shadow: 0 0 6px rgba(0, 255, 65, 0.6); }
+
+.badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border: 1px solid var(--neon);
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-family: 'Orbitron', monospace;
+  color: var(--neon);
+  background: rgba(0, 255, 65, 0.08);
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
+
+@media (min-width: 768px) {
+  .page-container { padding: 24px 32px 40px; }
+}
+
+.section-header {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(0, 255, 65, 0.6);
+  margin-bottom: 12px;
+}
+
+.stat-number {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--neon);
+  text-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(8, 12, 8, 0.97);
+  border-top: 1px solid rgba(0, 191, 111, 0.12);
+  backdrop-filter: blur(20px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #0d0d0d !important;
+  border: 1px solid rgba(0, 255, 65, 0.3) !important;
+  border-radius: 8px !important;
+}
+
+::selection {
+  background: rgba(0, 191, 111, 0.25);
+  color: #fff;
+}
