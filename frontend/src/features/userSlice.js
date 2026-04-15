@@ -1,27 +1,43 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { signInWithPopup, signOut } from 'firebase/auth';
+import { signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import api from '../services/api';
 
 // ── Thunks ────────────────────────────────────────────────────
 
+// Step 1: Trigger Google redirect (navigates away from the app)
 export const loginWithGoogle = createAsyncThunk(
   'user/loginWithGoogle',
   async (_, { rejectWithValue }) => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const token  = await result.user.getIdToken();
+      await signInWithRedirect(auth, googleProvider);
+      // Code after this won't run — user is redirected to Google
+      return null;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+// Step 2: Called on app mount — handles the result after Google redirects back
+export const handleRedirectResult = createAsyncThunk(
+  'user/handleRedirectResult',
+  async (_, { rejectWithValue }) => {
+    try {
+      const result = await getRedirectResult(auth);
+      if (!result) return null; // No redirect in progress, normal page load
+
+      const token = await result.user.getIdToken();
 
       // Sync with backend
       const { data } = await api.post('/auth/sync', {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Store token for future API calls
       localStorage.setItem('ecotrack_token', token);
-
       return { ...data, token };
     } catch (err) {
+      console.error('Redirect sign-in error:', err);
       return rejectWithValue(err.message);
     }
   }
@@ -130,28 +146,33 @@ const userSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    // loginWithGoogle
+    // loginWithGoogle — just triggers redirect, shows loading spinner
     builder
       .addCase(loginWithGoogle.pending,   (state) => { state.loading = true; state.error = null; })
-      .addCase(loginWithGoogle.fulfilled, (state, action) => {
-        state.loading = false;
-        state.token = action.payload.token;
-        const d = action.payload;
-        state.user = d;
-        state.totalXP = d.totalXP ?? 0;
-        state.level = d.level ?? 1;
-        state.badge = d.badge ?? 'Seedling';
-        state.badgeEmoji = LEVEL_BADGES[d.level]?.emoji ?? '🌱';
-        state.currentStreak = d.currentStreak ?? 0;
-        state.longestStreak = d.longestStreak ?? 0;
-        state.monthlyGoal = d.monthlyGoal ?? 100;
-        state.totalCarbonLogged = d.totalCarbonLogged ?? 0;
-        state.isAuthenticated = true;
-      })
-      .addCase(loginWithGoogle.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+      .addCase(loginWithGoogle.fulfilled, (state) => { state.loading = true; }) // keep loading during redirect
+      .addCase(loginWithGoogle.rejected,  (state, action) => { state.loading = false; state.error = action.payload; });
+
+    // handleRedirectResult — processes result after Google redirects back
+    const applyUserData = (state, action) => {
+      if (!action.payload) return; // null = no redirect was pending
+      state.loading = false;
+      const d = action.payload;
+      state.token = d.token;
+      state.user = d;
+      state.totalXP = d.totalXP ?? 0;
+      state.level = d.level ?? 1;
+      state.badge = d.badge ?? 'Seedling';
+      state.badgeEmoji = LEVEL_BADGES[d.level]?.emoji ?? '🌱';
+      state.currentStreak = d.currentStreak ?? 0;
+      state.longestStreak = d.longestStreak ?? 0;
+      state.monthlyGoal = d.monthlyGoal ?? 100;
+      state.totalCarbonLogged = d.totalCarbonLogged ?? 0;
+      state.isAuthenticated = true;
+    };
+    builder
+      .addCase(handleRedirectResult.pending,   (state) => { state.loading = true; state.error = null; })
+      .addCase(handleRedirectResult.fulfilled, applyUserData)
+      .addCase(handleRedirectResult.rejected,  (state, action) => { state.loading = false; state.error = action.payload; });
 
     // logoutUser
     builder.addCase(logoutUser.fulfilled, () => ({
@@ -188,4 +209,5 @@ const userSlice = createSlice({
 
 export const { setUserFromFirebase, updateUserStats, incrementCarbonLogged, clearError } = userSlice.actions;
 export const LEVEL_BADGES_MAP = LEVEL_BADGES;
+export { handleRedirectResult };
 export default userSlice.reducer;

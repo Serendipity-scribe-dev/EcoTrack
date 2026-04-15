@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
-import { refreshUser, setUserFromFirebase } from './features/userSlice';
+import { refreshUser, handleRedirectResult } from './features/userSlice';
 import { resetActivities } from './features/activitySlice';
 
 import LandingPage   from './pages/LandingPage';
@@ -37,15 +37,18 @@ export default function App() {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((s) => s.user);
 
-  // Listen for Firebase auth state changes (handles page refresh)
+  // Handle Google redirect result FIRST (runs after Google redirects back)
+  useEffect(() => {
+    dispatch(handleRedirectResult());
+  }, [dispatch]);
+
+  // Listen for Firebase auth state changes (handles page refresh / already signed-in)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          // Refresh token
           const token = await firebaseUser.getIdToken(true);
           localStorage.setItem('ecotrack_token', token);
-          // Refresh user from backend
           dispatch(refreshUser());
         } catch (err) {
           console.error('Token refresh failed:', err);
