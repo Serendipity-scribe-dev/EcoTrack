@@ -3,16 +3,16 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
-import { refreshUser, handleRedirectResult } from './features/userSlice';
+import { refreshUser } from './features/userSlice';
 import { resetActivities } from './features/activitySlice';
 
-import LandingPage   from './pages/LandingPage';
-import Dashboard     from './pages/Dashboard';
-import LogActivity   from './pages/LogActivity';
-import Leaderboard   from './pages/Leaderboard';
-import Profile       from './pages/Profile';
-import TopNav        from './components/TopNav';
-import BottomNav     from './components/BottomNav';
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
+import LogActivity from './pages/LogActivity';
+import Leaderboard from './pages/Leaderboard';
+import Profile from './pages/Profile';
+import TopNav from './components/TopNav';
+import BottomNav from './components/BottomNav';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {
@@ -38,9 +38,7 @@ export default function App() {
   const { isAuthenticated } = useSelector((s) => s.user);
 
   // Handle Google redirect result FIRST (runs after Google redirects back)
-  useEffect(() => {
-    dispatch(handleRedirectResult());
-  }, [dispatch]);
+
 
   // Listen for Firebase auth state changes (handles page refresh / already signed-in)
   useEffect(() => {

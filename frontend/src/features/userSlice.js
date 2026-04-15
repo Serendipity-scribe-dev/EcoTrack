@@ -1,35 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
+import { signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import api from '../services/api';
 
 // ── Thunks ────────────────────────────────────────────────────
 
-// Step 1: Trigger Google redirect (navigates away from the app)
+
+
+// Step 1 & 2 combined — popup handles everything in one shot
 export const loginWithGoogle = createAsyncThunk(
   'user/loginWithGoogle',
   async (_, { rejectWithValue }) => {
     try {
-      await signInWithRedirect(auth, googleProvider);
-      // Code after this won't run — user is redirected to Google
-      return null;
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-
-// Step 2: Called on app mount — handles the result after Google redirects back
-export const handleRedirectResult = createAsyncThunk(
-  'user/handleRedirectResult',
-  async (_, { rejectWithValue }) => {
-    try {
-      const result = await getRedirectResult(auth);
-      if (!result) return null; // No redirect in progress, normal page load
-
+      const result = await signInWithPopup(auth, googleProvider);
       const token = await result.user.getIdToken();
 
-      // Sync with backend
       const { data } = await api.post('/auth/sync', {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -37,11 +22,14 @@ export const handleRedirectResult = createAsyncThunk(
       localStorage.setItem('ecotrack_token', token);
       return { ...data, token };
     } catch (err) {
-      console.error('Redirect sign-in error:', err);
+      console.error('Google sign-in error:', err);
       return rejectWithValue(err.message);
     }
   }
 );
+
+// Step 2: Called on app mount — handles the result after Google redirects back
+
 
 export const logoutUser = createAsyncThunk(
   'user/logout',
@@ -153,26 +141,26 @@ const userSlice = createSlice({
       .addCase(loginWithGoogle.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
 
     // handleRedirectResult — processes result after Google redirects back
-    const applyUserData = (state, action) => {
-      state.loading = false; // ← ALWAYS reset loading first (was after early return — bug!)
-      if (!action.payload) return; // null = no redirect pending, just stop here
-      const d = action.payload;
-      state.token = d.token;
-      state.user = d;
-      state.totalXP = d.totalXP ?? 0;
-      state.level = d.level ?? 1;
-      state.badge = d.badge ?? 'Seedling';
-      state.badgeEmoji = LEVEL_BADGES[d.level]?.emoji ?? '🌱';
-      state.currentStreak = d.currentStreak ?? 0;
-      state.longestStreak = d.longestStreak ?? 0;
-      state.monthlyGoal = d.monthlyGoal ?? 100;
-      state.totalCarbonLogged = d.totalCarbonLogged ?? 0;
-      state.isAuthenticated = true;
-    };
-    builder
-      .addCase(handleRedirectResult.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(handleRedirectResult.fulfilled, applyUserData)
-      .addCase(handleRedirectResult.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+    // const applyUserData = (state, action) => {
+    //   if (!action.payload) return; // null = no redirect was pending
+    //   state.loading = false;
+    //   const d = action.payload;
+    //   state.token = d.token;
+    //   state.user = d;
+    //   state.totalXP = d.totalXP ?? 0;
+    //   state.level = d.level ?? 1;
+    //   state.badge = d.badge ?? 'Seedling';
+    //   state.badgeEmoji = LEVEL_BADGES[d.level]?.emoji ?? '🌱';
+    //   state.currentStreak = d.currentStreak ?? 0;
+    //   state.longestStreak = d.longestStreak ?? 0;
+    //   state.monthlyGoal = d.monthlyGoal ?? 100;
+    //   state.totalCarbonLogged = d.totalCarbonLogged ?? 0;
+    //   state.isAuthenticated = true;
+    // };
+    // builder
+    //   .addCase(handleRedirectResult.pending, (state) => { state.loading = true; state.error = null; })
+    //   .addCase(handleRedirectResult.fulfilled, applyUserData)
+    //   .addCase(handleRedirectResult.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
 
     // logoutUser
     builder.addCase(logoutUser.fulfilled, () => ({
