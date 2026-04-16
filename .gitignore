@@ -6,7 +6,7 @@ dist/
 # Environment files — NEVER commit these
 backend/.env
 frontend/.env.local
-frontend/.env
+frontend/.env.production
 
 # OS files
 .DS_Store
